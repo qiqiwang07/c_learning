@@ -40,6 +40,7 @@ int main(void)
         return 1;
     }
 
+
     /* 如果 a 大于 b，则交换，保证区间 [a, b] 是升序 */
     if (a > b) {
         int tmp = a;

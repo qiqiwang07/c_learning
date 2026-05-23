@@ -77,8 +77,8 @@ char* multiply(char* num1, char* num2) {
  * 从标准输入读取两个大整数，计算乘积并输出
  */
 int main() {
-    char num1[1002];
-    char num2[1002];
+    char num1[1001];
+    char num2[1001];
 
     // 从标准输入读取第一行
     if (fgets(num1, sizeof(num1), stdin) == NULL) {

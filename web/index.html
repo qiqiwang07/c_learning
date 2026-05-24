@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>C Practice - Training Page</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+</head>
+<body>
+  <header>
+    <h1>C Practice</h1>
+    <p>Small web page to practice C programming. Edit, download, and run locally.</p>
+  </header>
+
+  <main>
+    <aside id="ex-list">
+      <h2>Exercises</h2>
+      <ul id="exercises"></ul>
+    </aside>
+
+    <section id="editor-area">
+      <div id="meta">
+        <h2 id="title">Select an exercise</h2>
+        <div id="controls">
+          <button id="download">Download .c</button>
+          <button id="copy">Copy</button>
+        </div>
+      </div>
+
+      <textarea id="code" spellcheck="false"></textarea>
+
+      <div id="info">
+        <h3>Description</h3>
+        <pre id="desc">Choose an exercise from the left.</pre>
+
+        <h3>Sample input</h3>
+        <pre id="sample-in">-</pre>
+
+        <h3>Expected output</h3>
+        <pre id="sample-out">-</pre>
+
+        <h3>How to run</h3>
+        <pre>
+Compile locally:
+gcc yourfile.c -o yourfile
+./yourfile
+        </pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

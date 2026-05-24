@@ -11,3 +11,7 @@ This program prompts the user to enter two integers and prints all prime numbers
 This program performs large integer multiplication using only standard C library functions. It reads two decimal numbers from standard input as strings (up to 1000 digits each), multiplies them using manual digit-array arithmetic, and prints the exact decimal product without leading zeros.
 
 The implementation avoids arbitrary-precision libraries and uses dynamic memory for the result string, ensuring correct handling of very large values and proper memory cleanup.
+
+## C Practice Web
+
+A simple static webpage to practice C programming is available in the `web/` folder. It includes exercises, editable code templates, and convenient buttons to download or copy code. Open [web/index.html](web/index.html) in your browser to use it locally.

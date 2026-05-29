@@ -1,8 +1,8 @@
 const exercises = [
   {
     id: 'primes-range',
-    title: 'Primes in Range',
-    desc: 'Prompt user for two integers and print all prime numbers between them (inclusive).',
+    title: '区间质数',
+    desc: '提示输入两个整数，并打印它们之间（含端点）的所有质数。',
     template: `#include <stdio.h>
 #include <stdbool.h>
 
@@ -27,8 +27,8 @@ int main(void){
   },
   {
     id: 'sum-array',
-    title: 'Sum of Array',
-    desc: 'Read n then n integers, print their sum.',
+    title: '数组求和',
+    desc: '读取 n，接着读取 n 个整数，输出它们的和。',
     template: `#include <stdio.h>
 int main(){
   int n; if(scanf("%d", &n)!=1) return 1;
@@ -50,7 +50,7 @@ function init(){
 
   $('#download').onclick = downloadCode;
   $('#copy').onclick = copyCode;
-  $('#code').value = '// Select an exercise to load template here.';
+  $('#code').value = '/* 从左侧选择练习以加载模板 */';
 }
 
 function select(id){
@@ -69,7 +69,7 @@ function downloadCode(){
 }
 
 function copyCode(){
-  navigator.clipboard.writeText($('#code').value).then(()=>alert('Copied to clipboard'))
+  navigator.clipboard.writeText($('#code').value).then(()=>alert('已复制到剪贴板'))
 }
 
 window.addEventListener('DOMContentLoaded', init);

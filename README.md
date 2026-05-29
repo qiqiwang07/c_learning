@@ -1,17 +1,17 @@
-# C Learning
+# C 学习
 
-I am a beginner of C Program Language.
+我是 C 语言初学者。
 
-## Prime
+## Prime（区间质数）
 
-This program prompts the user to enter two integers and prints all prime numbers between them (inclusive). It includes a helper function `is_prime` to check if a number is prime.
+该程序提示用户输入两个整数，并打印它们之间（包含端点）的所有质数。程序包含辅助函数 `is_prime` 用于判断一个数是否为质数。
 
-## big_multiply.c
+## big_multiply.c（大数相乘）
 
-This program performs large integer multiplication using only standard C library functions. It reads two decimal numbers from standard input as strings (up to 1000 digits each), multiplies them using manual digit-array arithmetic, and prints the exact decimal product without leading zeros.
+该程序使用标准 C 库函数实现大整数相乘。它以字符串形式从标准输入读取两个十进制数（可达 1000 位），使用手工的位数组算法相乘，并打印精确的十进制乘积，不带前导零。
 
-The implementation avoids arbitrary-precision libraries and uses dynamic memory for the result string, ensuring correct handling of very large values and proper memory cleanup.
+实现避免使用任意精度库，使用动态内存保存结果字符串，保证对极大数值的正确处理并进行适当的内存释放。
 
-## C Practice Web
+## C 练习网页
 
-A simple static webpage to practice C programming is available in the `web/` folder. It includes exercises, editable code templates, and convenient buttons to download or copy code. Open [web/index.html](web/index.html) in your browser to use it locally.
+一个用于练习 C 语言的静态网页已加入 `web/` 目录。网页包含练习题列表、可编辑的代码模板，以及下载和复制按钮。可在本地打开 [web/index.html](web/index.html) 使用。

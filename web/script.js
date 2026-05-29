@@ -144,7 +144,7 @@ function select(id){
 function downloadCode(){
   const code = $('#code').value; const blob = new Blob([code], {type:'text/plain'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'exercise.c'; document.body.appendChild(a); a.click(); a.remove();
+  a.download = '练习.c'; document.body.appendChild(a); a.click(); a.remove();
 }
 
 function copyCode(){

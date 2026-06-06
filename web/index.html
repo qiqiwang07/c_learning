@@ -4,20 +4,39 @@
   <meta charset="utf-8" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>C 练习 - 训练页面</title>
+  <title>编程练习 - 教学 / 创造</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.css">
 </head>
 <body>
   <header>
-    <h1>C 练习</h1>
-    <p>用于练习 C 语言的简易网页。可在线编辑、下载并在本地运行。</p>
+    <h1>编程练习平台</h1>
+    <p>“教学”与“创造”双模块，可通过命令行检查代码、提示知识点，并下载本地运行。</p>
   </header>
 
+  <section id="mode-bar">
+    <button id="btn-teach" class="mode-btn active">教学模式</button>
+    <button id="btn-create" class="mode-btn">创造模式</button>
+  </section>
+
   <main>
-    <aside id="ex-list">
-      <h2>练习</h2>
-      <ul id="exercises"></ul>
+    <aside id="sidebar">
+      <div class="panel">
+        <h2 id="sidebar-mode-title">教学模块</h2>
+        <p>经典语言：</p>
+        <div id="language-buttons" class="language-grid"></div>
+        <button id="hint" class="secondary-btn">提示知识点</button>
+      </div>
+      <div class="panel" id="exercise-panel">
+        <h2>练习列表</h2>
+        <ul id="exercises"></ul>
+      </div>
+      <div class="panel">
+        <h2>已保存代码</h2>
+        <button id="refresh-saved" class="secondary-btn">刷新列表</button>
+        <ul id="saved-list" class="saved-list"></ul>
+      </div>
     </aside>
 
     <section id="editor-area">
@@ -26,10 +45,20 @@
         <div id="controls">
           <button id="download">下载 .c</button>
           <button id="copy">复制</button>
+          <button id="save">保存</button>
+          <button id="show-answer" class="secondary-btn" style="display:none;">查看参考答案</button>
         </div>
       </div>
 
       <textarea id="code" spellcheck="false"></textarea>
+
+      <div id="command-area">
+        <div id="console-output" aria-live="polite">命令行：输入 <code>help</code> 获取可用命令。</div>
+        <div id="command-input-wrap">
+          <input id="command-input" placeholder="输入命令，例如: help / check / run" spellcheck="false" />
+          <button id="command-submit">执行</button>
+        </div>
+      </div>
 
       <div id="info">
         <h3>题目描述</h3>
@@ -42,17 +71,20 @@
         <pre id="sample-out">-</pre>
 
         <h3>运行方式</h3>
-        <pre>
-在本地编译：
-gcc yourfile.c -o yourfile
-./yourfile
-        </pre>
+        <pre>在本地编译：gcc yourfile.c -o yourfile
+./yourfile</pre>
       </div>
     </section>
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/go/go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/rust/rust.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/anyword-hint.min.js"></script>
   <script src="script.js" charset="utf-8"></script>
 </body>
 </html>

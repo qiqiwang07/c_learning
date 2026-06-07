@@ -4,18 +4,43 @@ import json
 import os
 import socketserver
 import sqlite3
+import signal
 import subprocess
 import sys
 import tempfile
 import urllib.parse
+import urllib.request
+import urllib.error
 import resource
 from datetime import datetime
 
+BASE_DIR = os.path.dirname(__file__)
+
+def load_env_file():
+    env_path = os.path.join(BASE_DIR, '.env')
+    if not os.path.exists(env_path):
+        return
+
+    with open(env_path, 'r', encoding='utf-8') as env_file:
+        for raw_line in env_file:
+            line = raw_line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+            key, value = line.split('=', 1)
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key and key not in os.environ:
+                os.environ[key] = value
+
+
+load_env_file()
+
 PORT = int(os.environ.get('PORT', '7000'))
 URL_PREFIX = '/c_learning'
-BASE_DIR = os.path.dirname(__file__)
 STATIC_DIR = os.path.join(BASE_DIR, 'web')
 DB_PATH = os.path.join(BASE_DIR, 'code_store.db')
+DEEPSEEK_API_URL = os.environ.get('DEEPSEEK_API_URL', 'https://api.deepseek.com/chat/completions')
+DEEPSEEK_MODEL = os.environ.get('DEEPSEEK_MODEL', 'deepseek-chat')
 
 def init_db():
     with sqlite3.connect(DB_PATH) as conn:
@@ -76,10 +101,94 @@ def limit_resources():
     try:
         resource.setrlimit(resource.RLIMIT_CPU, (3, 5))
         resource.setrlimit(resource.RLIMIT_AS, (256 * 1024 * 1024, 256 * 1024 * 1024))
-        resource.setrlimit(resource.RLIMIT_NPROC, (12, 24))
+        resource.setrlimit(resource.RLIMIT_NPROC, (4, 8))
         resource.setrlimit(resource.RLIMIT_FSIZE, (10 * 1024 * 1024, 10 * 1024 * 1024))
+        resource.setrlimit(resource.RLIMIT_NOFILE, (32, 32))
     except Exception:
         pass
+
+
+def prepare_sandbox():
+    # 创建新的会话 / 进程组，方便后续超时时彻底终止所有子进程。
+    try:
+        os.setsid()
+    except Exception:
+        pass
+    limit_resources()
+
+
+def build_ai_messages(question, language='', mode='', code=''):
+    system_prompt = (
+        '你是一个面向编程练习平台的中文 AI 助手。'
+        '回答要直接、准确、简洁，优先帮助用户理解代码、修复错误、给出下一步建议。'
+    )
+    context_parts = []
+    if language:
+        context_parts.append(f'当前语言：{language}')
+    if mode:
+        context_parts.append(f'当前模式：{mode}')
+    if code:
+        context_parts.append('当前编辑器代码如下：\n' + code)
+
+    user_prompt = question
+    if context_parts:
+        user_prompt += '\n\n上下文信息：\n' + '\n'.join(context_parts)
+
+    return [
+        {'role': 'system', 'content': system_prompt},
+        {'role': 'user', 'content': user_prompt},
+    ]
+
+
+def query_deepseek(question, language='', mode='', code=''):
+    api_key = (
+        os.environ.get('DEEPSEEK_API_KEY')
+        or os.environ.get('DEEPSEEK_KEY')
+        or os.environ.get('DEEPSEEKKEY')
+        or os.environ.get('OPENAI_API_KEY')
+    )
+    if not api_key:
+        return False, '未配置 DeepSeek API key。请在服务端环境变量或 .env 中设置 DEEPSEEK_API_KEY、DEEPSEEK_KEY 或 DEEPSEEKKEY 后重启服务。'
+
+    payload = {
+        'model': os.environ.get('DEEPSEEK_MODEL', DEEPSEEK_MODEL),
+        'messages': build_ai_messages(question, language, mode, code),
+        'temperature': 0.3,
+    }
+    body = json.dumps(payload).encode('utf-8')
+    request = urllib.request.Request(
+        DEEPSEEK_API_URL,
+        data=body,
+        headers={
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {api_key}',
+        },
+        method='POST',
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            response_data = json.loads(response.read().decode('utf-8'))
+    except urllib.error.HTTPError as ex:
+        error_body = ex.read().decode('utf-8', errors='ignore')
+        return False, f'DeepSeek 请求失败（HTTP {ex.code}）：{error_body or ex.reason}'
+    except urllib.error.URLError as ex:
+        return False, f'无法连接 DeepSeek 服务：{ex.reason}'
+    except TimeoutError:
+        return False, 'DeepSeek 请求超时，请稍后重试。'
+    except json.JSONDecodeError:
+        return False, 'DeepSeek 返回了无法解析的响应。'
+
+    choices = response_data.get('choices') or []
+    if not choices:
+        return False, 'DeepSeek 未返回可用回答。'
+
+    message = choices[0].get('message') or {}
+    content = message.get('content', '').strip()
+    if not content:
+        return False, 'DeepSeek 返回内容为空。'
+
+    return True, content
 
 class RequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -140,18 +249,25 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
             self.handle_compile(run_program=False)
         elif stripped_path == '/api/save':
             self.handle_save()
+        elif stripped_path == '/api/ai':
+            self.handle_ai()
         else:
             self.send_error(404, 'Not Found')
 
-    def handle_save(self):
+    def read_json_body(self):
         length = int(self.headers.get('Content-Length', 0))
         body = self.rfile.read(length).decode('utf-8')
         try:
-            data = json.loads(body)
+            return json.loads(body), None
         except json.JSONDecodeError:
+            return None, '请求体不是有效的 JSON。'
+
+    def handle_save(self):
+        data, error = self.read_json_body()
+        if error:
             self.send_json({
                 'success': False,
-                'error': '请求体不是有效的 JSON。'
+                'error': error
             })
             return
 
@@ -183,14 +299,11 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_json({'success': True, 'snippet': snippet})
 
     def handle_compile(self, run_program=False):
-        length = int(self.headers.get('Content-Length', 0))
-        body = self.rfile.read(length).decode('utf-8')
-        try:
-            data = json.loads(body)
-        except json.JSONDecodeError:
+        data, error = self.read_json_body()
+        if error:
             self.send_json({
                 'success': False,
-                'error': '请求体不是有效的 JSON。'
+                'error': error
             })
             return
 
@@ -254,7 +367,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
                     capture_output=True,
                     text=True,
                     timeout=12,
-                    preexec_fn=limit_resources,
+                    preexec_fn=prepare_sandbox,
                 )
             except FileNotFoundError as ex:
                 self.send_json({
@@ -292,27 +405,32 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             try:
-                run_proc = subprocess.run(
+                run_proc = subprocess.Popen(
                     run_command(language),
-                    input=stdin,
-                    capture_output=True,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
                     text=True,
-                    timeout=6,
                     cwd=tempdir if language == 'Java' else tempdir,
-                    preexec_fn=limit_resources,
+                    preexec_fn=prepare_sandbox,
                 )
+                stdout, stderr = run_proc.communicate(input=stdin, timeout=6)
                 self.send_json({
                     'success': True,
                     'compiled': True,
                     'returncode': run_proc.returncode,
-                    'stdout': run_proc.stdout,
-                    'stderr': run_proc.stderr,
+                    'stdout': stdout,
+                    'stderr': stderr,
                 })
             except subprocess.TimeoutExpired as ex:
+                try:
+                    os.killpg(os.getpgid(run_proc.pid), signal.SIGKILL)
+                except Exception:
+                    pass
                 self.send_json({
                     'success': False,
                     'compiled': True,
-                    'stderr': '程序运行超时。请检查是否进入死循环。',
+                    'stderr': '程序运行超时。已终止任务。请检查是否进入死循环。',
                     'stdout': ex.stdout or '',
                 })
             except FileNotFoundError as ex:
@@ -323,6 +441,33 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
                     'stdout': ''
                 })
                 return
+
+    def handle_ai(self):
+        data, error = self.read_json_body()
+        if error:
+            self.send_json({'success': False, 'error': error})
+            return
+
+        question = data.get('question', '')
+        language = data.get('language', '')
+        mode = data.get('mode', '')
+        code = data.get('code', '')
+
+        if not isinstance(question, str) or not question.strip():
+            self.send_json({'success': False, 'error': 'question 不能为空。'})
+            return
+
+        ok, result = query_deepseek(
+            question=question.strip(),
+            language=language if isinstance(language, str) else '',
+            mode=mode if isinstance(mode, str) else '',
+            code=code if isinstance(code, str) else '',
+        )
+        if not ok:
+            self.send_json({'success': False, 'error': result})
+            return
+
+        self.send_json({'success': True, 'answer': result})
 
     def send_json(self, data):
         body = json.dumps(data, ensure_ascii=False).encode('utf-8')

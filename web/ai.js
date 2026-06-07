@@ -1,3 +1,7 @@
+import { askAI as requestAI } from './api.js?v=202606071520';
+import { state } from './state.js?v=20260607';
+import { getCode } from './editor.js?v=20260607';
+
 function $(selector) {
   return document.querySelector(selector);
 }
@@ -13,19 +17,30 @@ function appendAIMessage(role, text) {
 }
 
 async function getAIResponse(question) {
-  // 这里是占位实现。真正接入 DeepSeek API 应该在后端安全处理 API key。
-  return `AI 助手已准备好回答你的问题：\n${question}\n\n（提示：请在后端配置 DeepSeek API，并通过安全接口调用，避免将 API key 写入前端。）`;
+  const data = await requestAI(question, {
+    language: state.currentLanguage,
+    mode: state.currentMode,
+    code: getCode(),
+  });
+  if (!data.success) {
+    throw new Error(data.error || 'AI 服务返回失败。');
+  }
+  return data.answer;
 }
 
-function askAI() {
+async function askAI() {
   const input = $('#ai-input');
+  const sendButton = $('#ai-send');
   if (!input) return;
   const question = input.value.trim();
   if (!question) return;
   appendAIMessage('user', question);
   input.value = '';
   appendAIMessage('assistant', '正在生成回答，请稍候...');
-  getAIResponse(question).then(answer => {
+  input.disabled = true;
+  if (sendButton) sendButton.disabled = true;
+  try {
+    const answer = await getAIResponse(question);
     const assistantNodes = document.querySelectorAll('.ai-message-assistant');
     const last = assistantNodes[assistantNodes.length - 1];
     if (last) {
@@ -33,9 +48,20 @@ function askAI() {
     } else {
       appendAIMessage('assistant', answer);
     }
-  }).catch(error => {
-    appendAIMessage('assistant', `AI 请求失败：${error.message}`);
-  });
+  } catch (error) {
+    const assistantNodes = document.querySelectorAll('.ai-message-assistant');
+    const last = assistantNodes[assistantNodes.length - 1];
+    const message = `AI 请求失败：${error.message}`;
+    if (last) {
+      last.textContent = message;
+    } else {
+      appendAIMessage('assistant', message);
+    }
+  } finally {
+    input.disabled = false;
+    if (sendButton) sendButton.disabled = false;
+    input.focus();
+  }
 }
 
 export function initAI() {

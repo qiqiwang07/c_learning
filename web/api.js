@@ -44,3 +44,12 @@ export async function getSnippet(id) {
   const res = await apiFetch(`api/snippet?id=${encodeURIComponent(id)}`);
   return res.json();
 }
+
+export async function askAI(question, context = {}) {
+  const res = await apiFetch('api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question, ...context }),
+  });
+  return res.json();
+}

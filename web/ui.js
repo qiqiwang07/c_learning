@@ -1,8 +1,8 @@
 import { exercises, languages, hints, getExerciseTemplate, getFileExtension, getPlaceholderText } from './data.js?v=20260607';
 import { state } from './state.js?v=20260607';
 import { initEditor, updateEditorMode, setCode, setEditorReadOnly, getCode } from './editor.js?v=20260607';
-import { checkCode, compileCode, saveSnippet, listSnippets, getSnippet } from './api.js?v=20260607';
-import { initAI } from './ai.js?v=20260607';
+import { checkCode, compileCode, saveSnippet, listSnippets, getSnippet } from './api.js?v=202606072215';
+import { initAI } from './ai.js?v=202606072215';
 
 function $(sel) {
   return document.querySelector(sel);

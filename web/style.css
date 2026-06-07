@@ -22,7 +22,9 @@ main { display: flex; gap: 14px; padding: 16px 24px 32px; align-items: flex-star
 .lang-btn { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-weight: 700; }
 .lang-btn.active { background: var(--accent); color: #fff; border-color: var(--accent-dark); }
 #exercises li:hover { background: #eff7ff; }
-section#editor-area { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+section#editor-area { flex: 1; display: grid; grid-template-columns: 1.65fr 0.95fr; gap: 14px; }
+#editor-column { display: flex; flex-direction: column; gap: 14px; }
+#right-column { display: flex; flex-direction: column; gap: 14px; }
 #meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
 #meta h2 { margin: 0; font-size: 20px; }
 #controls { display: flex; gap: 10px; }
@@ -33,6 +35,12 @@ section#editor-area { flex: 1; display: flex; flex-direction: column; gap: 14px;
 #command-input { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
 #command-input:focus { outline: 2px solid rgba(3, 102, 214, 0.25); }
 #command-submit { background: var(--accent); color: #fff; }
+#ai-panel { min-height: 280px; display: flex; flex-direction: column; }
+#ai-output { min-height: 180px; padding: 12px; background: #f8f9fa; border: 1px solid var(--border); border-radius: 12px; overflow-y: auto; white-space: pre-wrap; color: #111; }
+#ai-input-row { display: flex; gap: 10px; margin-top: 12px; }
+#ai-input { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+#ai-send { background: var(--accent); color: #fff; }
+
 .CodeMirror {
   min-height: 320px;
   border-radius: 12px;

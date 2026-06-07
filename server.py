@@ -11,7 +11,8 @@ import urllib.parse
 import resource
 from datetime import datetime
 
-PORT = 8001
+PORT = int(os.environ.get('PORT', '7000'))
+URL_PREFIX = '/c_learning'
 BASE_DIR = os.path.dirname(__file__)
 STATIC_DIR = os.path.join(BASE_DIR, 'web')
 DB_PATH = os.path.join(BASE_DIR, 'code_store.db')
@@ -84,22 +85,60 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
 
+    def strip_prefix(self, path):
+        if path == URL_PREFIX:
+            return '/'
+        if path.startswith(URL_PREFIX + '/'):
+            return path[len(URL_PREFIX):]
+        return path
+
+    def rewrite_static_path(self):
+        parsed = urllib.parse.urlparse(self.path)
+        stripped_path = self.strip_prefix(parsed.path)
+
+        if parsed.path == URL_PREFIX:
+            return None, URL_PREFIX + '/'
+
+        self.path = stripped_path + ('?' + parsed.query if parsed.query else '')
+        return stripped_path, None
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path == '/api/list':
+        stripped_path, redirect_to = self.rewrite_static_path()
+
+        if redirect_to is not None:
+            self.send_response(301)
+            self.send_header('Location', redirect_to)
+            self.end_headers()
+            return
+
+        if stripped_path == '/api/list':
             self.handle_list()
-        elif parsed.path == '/api/snippet':
+        elif stripped_path == '/api/snippet':
             self.handle_get_snippet(parsed.query)
         else:
             super().do_GET()
 
+    def do_HEAD(self):
+        _, redirect_to = self.rewrite_static_path()
+
+        if redirect_to is not None:
+            self.send_response(301)
+            self.send_header('Location', redirect_to)
+            self.end_headers()
+            return
+
+        super().do_HEAD()
+
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path == '/api/compile':
+        stripped_path = self.strip_prefix(parsed.path)
+
+        if stripped_path == '/api/compile':
             self.handle_compile(run_program=True)
-        elif parsed.path == '/api/check':
+        elif stripped_path == '/api/check':
             self.handle_compile(run_program=False)
-        elif parsed.path == '/api/save':
+        elif stripped_path == '/api/save':
             self.handle_save()
         else:
             self.send_error(404, 'Not Found')
@@ -295,7 +334,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     init_db()
-    print(f'启动本地服务，访问 http://localhost:{PORT} 运行代码。')
+    print(f'启动本地服务，访问 http://localhost:{PORT}{URL_PREFIX}/ 运行代码。')
     with socketserver.TCPServer(('', PORT), RequestHandler) as httpd:
         try:
             httpd.serve_forever()

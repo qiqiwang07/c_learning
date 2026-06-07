@@ -1,5 +1,5 @@
-import { completions, getEditorMode } from './data.js';
-import { state } from './state.js';
+import { completions, getEditorMode } from './data.js?v=20260607';
+import { state } from './state.js?v=20260607';
 
 let editor = null;
 

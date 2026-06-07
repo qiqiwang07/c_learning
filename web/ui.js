@@ -1,7 +1,8 @@
-import { exercises, languages, hints, getExerciseTemplate, getFileExtension, getPlaceholderText } from './data.js';
-import { state } from './state.js';
-import { initEditor, updateEditorMode, setCode, setEditorReadOnly, getCode } from './editor.js';
-import { checkCode, compileCode, saveSnippet, listSnippets, getSnippet } from './api.js';
+import { exercises, languages, hints, getExerciseTemplate, getFileExtension, getPlaceholderText } from './data.js?v=20260607';
+import { state } from './state.js?v=20260607';
+import { initEditor, updateEditorMode, setCode, setEditorReadOnly, getCode } from './editor.js?v=20260607';
+import { checkCode, compileCode, saveSnippet, listSnippets, getSnippet } from './api.js?v=20260607';
+import { initAI } from './ai.js?v=20260607';
 
 function $(sel) {
   return document.querySelector(sel);
@@ -44,14 +45,18 @@ function updateModeUI() {
     if (exercisePanel) exercisePanel.style.display = 'block';
     if (state.currentExercise) {
       showAnswerBtn.style.display = 'inline-block';
+      $('#title').textContent = state.currentExercise.title;
+      $('#desc').textContent = state.currentExercise.desc;
+      $('#sample-in').textContent = state.currentExercise.sampleIn;
+      $('#sample-out').textContent = state.currentExercise.sampleOut;
     } else {
       showAnswerBtn.style.display = 'none';
-    }
-    if (!state.currentExercise) {
+      $('#title').textContent = '请选择练习';
+      $('#desc').textContent = '从左侧练习列表中选择一个题目，进入教学模式。';
+      $('#sample-in').textContent = '-';
+      $('#sample-out').textContent = '-';
       setEditorReadOnly(true);
       setCode(getPlaceholderText(state.currentLanguage));
-    } else if (!state.answerVisible) {
-      setEditorReadOnly(false);
     }
   } else {
     hint.style.display = 'none';
@@ -322,8 +327,22 @@ export function init() {
   $('#refresh-saved').onclick = refreshSavedList;
   $('#show-answer').onclick = toggleAnswerMode;
   $('#hint').onclick = showHint;
-  $('#btn-teach').onclick = () => switchMode('teach');
-  $('#btn-create').onclick = () => switchMode('create');
+
+  const teachBtn = $('#btn-teach');
+  const createBtn = $('#btn-create');
+  if (teachBtn) {
+    teachBtn.addEventListener('click', event => {
+      event.preventDefault();
+      switchMode('teach');
+    });
+  }
+  if (createBtn) {
+    createBtn.addEventListener('click', event => {
+      event.preventDefault();
+      switchMode('create');
+    });
+  }
+
   $('#command-submit').onclick = handleCommand;
   $('#command-input').addEventListener('keydown', event => {
     if (event.key === 'Enter') {
@@ -336,5 +355,6 @@ export function init() {
   setCode(getPlaceholderText(state.currentLanguage));
   setEditorReadOnly(true);
   updateModeUI();
+  initAI();
   refreshSavedList();
 }

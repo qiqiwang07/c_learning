@@ -555,6 +555,10 @@ export const codeMirrorModes = {
   'Rust': 'rust'
 };
 
+export function getEditorMode(lang) {
+  return codeMirrorModes[lang] || codeMirrorModes.C;
+}
+
 export const languageExtensions = {
   'C': 'c',
   'C++': 'cpp',

@@ -101,9 +101,9 @@ def limit_resources():
     try:
         resource.setrlimit(resource.RLIMIT_CPU, (3, 5))
         resource.setrlimit(resource.RLIMIT_AS, (256 * 1024 * 1024, 256 * 1024 * 1024))
-        resource.setrlimit(resource.RLIMIT_NPROC, (4, 8))
+        resource.setrlimit(resource.RLIMIT_NPROC, (16, 32))
         resource.setrlimit(resource.RLIMIT_FSIZE, (10 * 1024 * 1024, 10 * 1024 * 1024))
-        resource.setrlimit(resource.RLIMIT_NOFILE, (32, 32))
+        resource.setrlimit(resource.RLIMIT_NOFILE, (64, 64))
     except Exception:
         pass
 
@@ -115,6 +115,21 @@ def prepare_sandbox():
     except Exception:
         pass
     limit_resources()
+
+
+def prepare_compile_sandbox():
+    # 编译阶段使用宽松的进程限制，避免 gcc / go / rust 等编译器因进程数受限而卡住。
+    try:
+        os.setsid()
+    except Exception:
+        pass
+    try:
+        resource.setrlimit(resource.RLIMIT_CPU, (12, 20))
+        resource.setrlimit(resource.RLIMIT_AS, (512 * 1024 * 1024, 512 * 1024 * 1024))
+        resource.setrlimit(resource.RLIMIT_NOFILE, (128, 128))
+        resource.setrlimit(resource.RLIMIT_FSIZE, (100 * 1024 * 1024, 100 * 1024 * 1024))
+    except Exception:
+        pass
 
 
 def build_ai_messages(question, language='', mode='', code=''):
@@ -367,7 +382,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
                     capture_output=True,
                     text=True,
                     timeout=12,
-                    preexec_fn=prepare_sandbox,
+                    preexec_fn=prepare_compile_sandbox,
                 )
             except FileNotFoundError as ex:
                 self.send_json({

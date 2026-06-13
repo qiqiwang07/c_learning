@@ -324,6 +324,8 @@ export function init() {
   $('#download').onclick = downloadCode;
   $('#copy').onclick = copyCode;
   $('#save').onclick = saveCurrentCode;
+  $('#check').onclick = runCheck;
+  $('#run-code').onclick = () => runProgram('');
   $('#refresh-saved').onclick = refreshSavedList;
   $('#show-answer').onclick = toggleAnswerMode;
   $('#hint').onclick = showHint;

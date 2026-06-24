@@ -1,18 +1,30 @@
-/* 全局 */
+/* =========================
+   全局
+========================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
   background: #1e1e1e;
   color: #ddd;
+  overflow: hidden;
 }
 
-/* 头部 */
+/* =========================
+   头部
+========================= */
 header {
+  height: 80px;
   background: #2d2d2d;
   padding: 15px 20px;
   border-bottom: 1px solid #444;
@@ -29,18 +41,25 @@ header p {
   margin-top: 5px;
 }
 
-/* 主体布局 */
+/* =========================
+   主体三栏布局
+========================= */
 main {
-  display: flex;
+  display: grid;
+  grid-template-columns: 220px minmax(720px, 1fr) 420px;
   height: calc(100vh - 80px);
+  width: 100vw;
+  overflow: hidden;
 }
 
-/* 左侧练习列表 */
+/* =========================
+   左侧练习列表
+========================= */
 #ex-list {
-  width: 220px;
   background: #252526;
   border-right: 1px solid #333;
   padding: 15px;
+  overflow-y: auto;
 }
 
 #ex-list h2 {
@@ -62,15 +81,21 @@ main {
   background: #3c3c3c;
 }
 
-/* 右侧 */
-#editor-area {
-  flex: 1;
+/* =========================
+   中间代码主区域
+========================= */
+#editor-main {
+  min-width: 0;
   display: flex;
   flex-direction: column;
+  background: #1e1e1e;
+  overflow: hidden;
 }
 
 /* 顶部信息栏 */
 #meta {
+  height: 56px;
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -85,46 +110,185 @@ main {
 }
 
 /* 按钮 */
-#controls button {
+#controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#controls button,
+#ai-send {
   background: #0e639c;
   border: none;
   color: white;
-  padding: 6px 12px;
-  margin-left: 8px;
+  padding: 7px 14px;
   border-radius: 4px;
   cursor: pointer;
   transition: 0.2s;
+  font-size: 14px;
 }
 
-#controls button:hover {
+#controls button:hover,
+#ai-send:hover {
   background: #1177bb;
 }
 
-/* 编辑器 */
-.CodeMirror {
-  height: 300px !important;
-  font-size: 14px;
-  background: #1e1e1e;
+.ai-msg {
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ai-msg.user {
+  background: #0e639c;
   color: #fff;
 }
 
-/* 信息区 */
-#info {
+.ai-msg.assistant {
+  background: #333;
+  color: #ddd;
+}
+
+/* 编辑器外层 */
+#code-wrap {
   flex: 1;
-  padding: 15px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* CodeMirror 关键设置 */
+.CodeMirror {
+  height: 100% !important;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+  background: #1e1e1e;
+}
+
+/* 控制台区域 */
+#console-wrap {
+  height: 180px;
+  flex-shrink: 0;
+  border-top: 1px solid #333;
+  background: #1b1b1b;
+  padding: 12px;
+  overflow: hidden;
+}
+
+#console-wrap h3 {
+  color: #4fc3f7;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+#console-output {
+  height: calc(100% - 28px);
   overflow-y: auto;
 }
 
-#info h3 {
-  margin-top: 15px;
-  margin-bottom: 5px;
-  color: #4fc3f7;
+/* =========================
+   右侧面板：题目 + AI
+========================= */
+#right-panel {
+  background: #252526;
+  border-left: 1px solid #333;
+  padding: 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-#info pre {
+.right-section h3,
+#ai-panel h3 {
+  font-size: 16px;
+  color: #4fc3f7;
+  margin-bottom: 8px;
+}
+
+.right-section pre,
+.panel {
   background: #2d2d2d;
+  color: #ccc;
   padding: 10px;
   border-radius: 6px;
   overflow-x: auto;
-  color: #ccc;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 14px;
+  min-height: 42px;
+}
+
+/* =========================
+   AI 区域
+========================= */
+#ai-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  flex: 1;
+}
+
+#ai-output {
+  flex: 1;
+  min-height: 120px;
+  margin-bottom: 10px;
+  overflow-y: auto;
+}
+
+#ai-input {
+  width: 100%;
+  height: 90px;
+  resize: vertical;
+  background: #1e1e1e;
+  color: white;
+  border: 1px solid #444;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+#ai-input:focus {
+  border-color: #0e639c;
+}
+
+/* =========================
+   滚动条优化
+========================= */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* =========================
+   小屏适配
+========================= */
+@media (max-width: 1200px) {
+  main {
+    grid-template-columns: 200px minmax(560px, 1fr) 360px;
+  }
+}
+
+@media (max-width: 980px) {
+  main {
+    grid-template-columns: 180px 1fr;
+  }
+
+  #right-panel {
+    display: none;
+  }
 }

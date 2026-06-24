@@ -243,3 +243,9 @@ function startApp() {
 
 /* ================= 启动 ================= */
 initAuth();
+
+
+export function init() {
+  initEditor();
+  initAI();
+}

@@ -9,106 +9,160 @@
   <link rel="stylesheet" href="style.css">
 
   <!-- CodeMirror -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css"
-  >
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
 
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css"
-  >
+  <style>
+    /* ✅ 悬浮按钮 */
+    #ai-fab {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 60px;
+      height: 60px;
+      background: #6c5ce7;
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 999;
+    }
+
+    /* ✅ AI 面板 */
+    #ai-float-panel {
+      position: fixed;
+      right: 20px;
+      bottom: 90px;
+      width: 320px;
+      height: 420px;
+      background: #1e1e2e;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      z-index: 999;
+      color: white;
+    }
+
+    #ai-header {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #ai-output {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    #ai-input {
+      height: 60px;
+      margin-bottom: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <h1>💻 C 练习</h1>
-  <p>在线练习 C 语言，可编辑代码、运行并结合 AI 学习。</p>
-</header>
+<!-- ✅ 用户栏 -->
+<div id="user-bar"></div>
 
-<main>
+<!-- ✅ 登录弹窗 -->
+<div id="auth-modal" class="modal hidden">
+  <div class="modal-content">
+    <h2 id="auth-title">登录</h2>
 
-  <!-- 左侧：练习列表 -->
-  <aside id="ex-list">
-    <h2>📚 练习列表</h2>
-    <ul id="exercises"></ul>
-  </aside>
+    <input id="auth-username" placeholder="用户名" />
+    <input id="auth-password" type="password" placeholder="密码（至少6位）" />
 
-  <!-- 中间：代码主区域 -->
-  <section id="editor-main">
+    <div id="auth-error" class="error"></div>
 
-    <!-- 顶部工具栏 -->
-    <div id="meta">
-      <h2 id="title">请选择练习</h2>
+    <button id="auth-submit" data-mode="login">登录</button>
 
-      <div id="controls">
-        <button id="check">检查</button>
-        <button id="run-code">运行</button>
-        <button id="save">保存</button>
+    <p>
+      <span id="auth-switch-text">没有账号？</span>
+      #去注册</a>
+    </p>
+  </div>
+</div>
+
+<!-- ✅ 主应用 -->
+<div id="app" class="hidden">
+
+  <header>
+    <h1>💻 C 练习</h1>
+  </header>
+
+  <main>
+
+    <aside id="ex-list">
+      <h2>📚 练习</h2>
+      <ul id="exercises"></ul>
+    </aside>
+
+    <section id="editor-main">
+      <div id="meta">
+        <h2 id="title">请选择练习</h2>
+
+        <div id="controls">
+          <button id="run-code">运行</button>
+        </div>
       </div>
-    </div>
 
-    <!-- 代码编辑器 -->
-    <div id="code-wrap">
-      <textarea id="code" spellcheck="false">#include <stdio.h>
+      <div id="code-wrap">
+<textarea id="code">#include <stdio.h>
 
 int main() {
     printf("Hello, C!\n");
     return 0;
 }
 </textarea>
-    </div>
-
-    <!-- 控制台 -->
-    <div id="console-wrap">
-      <h3>🖥 控制台</h3>
-      <div id="console-output" class="panel"></div>
-    </div>
-
-  </section>
-
-  <!-- 右侧：题目 + AI -->
-  <aside id="right-panel">
-
-    <section class="right-section">
-      <h3>📖 题目描述</h3>
-      <pre id="desc">从左侧选择一个练习。</pre>
+      </div>
     </section>
 
-    <section class="right-section">
-      <h3>📥 示例输入</h3>
-      <pre id="sample-in">-</pre>
-    </section>
+  </main>
 
-    <section class="right-section">
-      <h3>📤 示例输出</h3>
-      <pre id="sample-out">-</pre>
-    </section>
+</div>
 
-    <section id="ai-panel">
-      <h3>🤖 AI 助手</h3>
+<!-- ✅ 小圆AI按钮 -->
+<div id="ai-fab">🤖</div>
 
-      <div id="ai-output" class="panel"></div>
+<!-- ✅ AI 悬浮面板 -->
+<div id="ai-float-panel" class="hidden">
+  <div id="ai-header">AI 助手</div>
 
-      <textarea
-        id="ai-input"
-        placeholder="问 AI，比如：这段代码哪里错了？"
-      ></textarea>
+  <div id="ai-output"></div>
 
-      <button id="ai-send">发送</button>
-    </section>
+  <textarea id="ai-input" placeholder="输入问题..."></textarea>
+  <button id="ai-send">发送</button>
+</div>
 
-  </aside>
-
-</main>
-
-<!-- CodeMirror -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
 
-<!-- 主逻辑 -->
 ./main.jsscript>
+
+<script>
+  // ✅ 控制开关
+  const fab = document.getElementById("ai-fab");
+  const panel = document.getElementById("ai-float-panel");
+
+  fab.onclick = () => {
+    panel.classList.toggle("hidden");
+  };
+</script>
 
 </body>
 </html>

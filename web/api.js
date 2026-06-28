@@ -1,12 +1,7 @@
-const apiBase = (() => {
-  const path = window.location.pathname;
-  return path.endsWith('/') ? path : path + '/';
-})();
-
 const API_BASE = '/c_learning/';
 
 function apiFetch(endpoint, options = {}) {
-  const url = new URL(endpoint, window.location.origin + apiBase);
+  const url = new URL(endpoint, window.location.origin + API_BASE);
 
   return fetch(url.href, {
     credentials: 'same-origin',
@@ -38,7 +33,6 @@ export async function register(username, password) {
   return res.json();
 }
 
-// ✅ 修复：不要写死路径
 export async function logout() {
   const res = await apiFetch('api/logout', {
     method: 'POST',
@@ -85,15 +79,12 @@ export async function getSnippet(id) {
   return res.json();
 }
 
-// ✅ 修复：AI 参数结构正确
+// ========== AI ==========
 export async function askAI(question, context = {}) {
   const res = await apiFetch('api/ai', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      question,
-      context, // ✅ 关键修复
-    }),
+    body: JSON.stringify({ question, context }),
   });
   return res.json();
 }

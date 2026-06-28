@@ -4,158 +4,166 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <title>C 练习 - 训练页面</title>
+  <title>C 练习工坊</title>
 
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- CodeMirror -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-
-  <style>
-    /* ✅ 悬浮按钮 */
-    #ai-fab {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      width: 60px;
-      height: 60px;
-      background: #6c5ce7;
-      border-radius: 50%;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      z-index: 999;
-    }
-
-    /* ✅ AI 面板 */
-    #ai-float-panel {
-      position: fixed;
-      right: 20px;
-      bottom: 90px;
-      width: 320px;
-      height: 420px;
-      background: #1e1e2e;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-      z-index: 999;
-      color: white;
-    }
-
-    #ai-header {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    #ai-output {
-      flex: 1;
-      overflow-y: auto;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    #ai-input {
-      height: 60px;
-      margin-bottom: 5px;
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
 </head>
 
 <body>
-
-<!-- ✅ 用户栏 -->
-<div id="user-bar"></div>
-
-<!-- ✅ 登录弹窗 -->
-<div id="auth-modal" class="modal hidden">
-  <div class="modal-content">
-    <h2 id="auth-title">登录</h2>
-
-    <input id="auth-username" placeholder="用户名" />
-    <input id="auth-password" type="password" placeholder="密码（至少6位）" />
-
-    <div id="auth-error" class="error"></div>
-
-    <button id="auth-submit" data-mode="login">登录</button>
-
-    <p>
-      <span id="auth-switch-text">没有账号？</span>
-      #去注册</a>
-    </p>
-  </div>
-</div>
-
-<!-- ✅ 主应用 -->
-<div id="app" class="hidden">
-
-  <header>
-    <h1>💻 C 练习</h1>
-  </header>
-
-  <main>
-
-    <aside id="ex-list">
-      <h2>📚 练习</h2>
-      <ul id="exercises"></ul>
-    </aside>
-
-    <section id="editor-main">
-      <div id="meta">
-        <h2 id="title">请选择练习</h2>
-
-        <div id="controls">
-          <button id="run-code">运行</button>
-        </div>
+  <div class="page-noise"></div>
+  <div class="page-glow page-glow-left"></div>
+  <div class="page-glow page-glow-right"></div>
+  <div class="page-shell">
+    <header class="hero-bar">
+      <div class="brand-block">
+        <p class="eyebrow">C Learning Studio</p>
+        <h1>把练习、编译和讲解放进一个更顺手的界面里</h1>
+        <p class="hero-copy">
+          面向初学者的 C 语言训练页面，保留代码执行和登录能力，同时把阅读、写作和提问区域整理成更清晰的工作台。
+        </p>
       </div>
 
-      <div id="code-wrap">
-<textarea id="code">#include <stdio.h>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-label">训练模式</span>
+          <strong>本地编译</strong>
+          <p>直接调用你的编译器与运行环境。</p>
+        </div>
+        <div class="stat-card accent">
+          <span class="stat-label">推荐流程</span>
+          <strong>读题 -> 改码 -> 运行</strong>
+          <p>适合课堂演示和个人练习。</p>
+        </div>
+        <div class="stat-card muted">
+          <span class="stat-label">工作台</span>
+          <strong>编辑器 + AI 助手</strong>
+          <p>把代码、提示和问答放在同一个页面里。</p>
+        </div>
+      </div>
+    </header>
 
-int main() {
-    printf("Hello, C!\n");
-    return 0;
-}
-</textarea>
+    <section class="hero-strip soft-panel">
+      <div>
+        <p class="eyebrow">What You Can Do</p>
+        <h2>先聚焦练习过程，再看结果</h2>
+      </div>
+      <div class="strip-points">
+        <span class="strip-pill">逐题练习</span>
+        <span class="strip-pill">本地运行</span>
+        <span class="strip-pill">保存代码</span>
+        <span class="strip-pill">AI 提问</span>
       </div>
     </section>
 
-  </main>
+    <div id="user-bar" class="soft-panel user-bar"></div>
 
-</div>
+    <div id="auth-modal" class="modal hidden">
+      <div class="modal-content">
+        <p class="eyebrow">Account Access</p>
+        <h2 id="auth-title">登录</h2>
+        <p class="auth-copy">登录后可保存代码片段，并在当前浏览器中保持会话。</p>
 
-<!-- ✅ 小圆AI按钮 -->
-<div id="ai-fab">🤖</div>
+        <label class="field-label" for="auth-username">用户名</label>
+        <input id="auth-username" placeholder="例如：student01" />
 
-<!-- ✅ AI 悬浮面板 -->
-<div id="ai-float-panel" class="hidden">
-  <div id="ai-header">AI 助手</div>
+        <label class="field-label" for="auth-password">密码</label>
+        <input id="auth-password" type="password" placeholder="至少 6 位" />
 
-  <div id="ai-output"></div>
+        <div id="auth-error" class="error"></div>
 
-  <textarea id="ai-input" placeholder="输入问题..."></textarea>
-  <button id="ai-send">发送</button>
-</div>
+        <button id="auth-submit" data-mode="login">登录</button>
+
+        <p class="auth-switch-row">
+          <span id="auth-switch-text">没有账号？</span>
+          <a id="auth-switch" href="#">去注册</a>
+        </p>
+      </div>
+    </div>
+
+    <div id="app" class="hidden">
+      <main class="workspace-shell">
+        <aside id="ex-list" class="panel soft-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Practice Deck</p>
+              <h2>练习清单</h2>
+            </div>
+            <span class="chip">C / C++ / Python / JS</span>
+          </div>
+          <p class="section-copy">按题目逐步练习，先读思路，再切到编辑器尝试实现。</p>
+          <ul id="exercises"></ul>
+        </aside>
+
+        <section id="editor-main" class="panel editor-panel">
+          <div id="meta">
+            <div>
+              <p class="eyebrow">Workspace</p>
+              <h2 id="title">请选择练习</h2>
+              <p class="section-copy compact-copy">把一个小样例先跑通，再逐步补齐边界情况和异常输入。</p>
+            </div>
+
+            <div id="controls">
+              <button id="run-code">运行代码</button>
+            </div>
+          </div>
+
+          <div class="editor-grid">
+            <div id="code-wrap" class="soft-panel editor-surface">
+<textarea id="code">#include <stdio.h>
+
+int main(void) {
+  printf("Hello, C!\n");
+  return 0;
+}
+</textarea>
+            </div>
+
+            <div class="soft-panel note-panel">
+              <p class="eyebrow">Hints</p>
+              <h3>写题时先固定一个最小输入输出样例</h3>
+              <p>
+                对于循环、分支和函数题，先让程序对一个小样例跑通，再逐步扩展边界情况。这样比一次性写完整逻辑更容易定位错误。
+              </p>
+              <div class="note-divider"></div>
+              <p class="note-callout">建议流程：先写最小正确版本，再处理性能和格式细节。</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <button id="ai-fab" aria-label="打开 AI 助手">AI</button>
+
+  <div id="ai-float-panel" class="hidden">
+    <div id="ai-header">
+      <div>
+        <p class="eyebrow">Assistant</p>
+        <strong>AI 助手</strong>
+      </div>
+      <span class="chip">问思路 / 问报错</span>
+    </div>
+
+    <div id="ai-output"></div>
+
+    <textarea id="ai-input" placeholder="输入问题，例如：为什么这个循环会死循环？"></textarea>
+    <button id="ai-send">发送</button>
+  </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
 
-./main.jsscript>
+<script type="module" src="./main.js"></script>
 
 <script>
-  // ✅ 控制开关
   const fab = document.getElementById("ai-fab");
   const panel = document.getElementById("ai-float-panel");
 

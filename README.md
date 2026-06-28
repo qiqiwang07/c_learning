@@ -13,7 +13,8 @@
 
 ## 目录结构
 
-- `server.py` - 后端 HTTP 服务器，处理静态资源、API、编译、运行、登录、保存
+- `server.c` - C 后端 HTTP 服务器（`libevent` + `sqlite3` + `OpenSSL`）
+- `Makefile` - C 后端编译与启动
 - `web/index.html` - 前端入口页面
 - `web/style.css` - 页面样式
 - `web/main.js` - 前端应用启动、认证流程
@@ -26,8 +27,13 @@
 
 ## 运行环境
 
-- Python 3
+- C 编译器（`gcc`）
+- `libevent` 开发库
+- `sqlite3` 开发库
+- `OpenSSL` 开发库
 - `gcc` / `g++`（C/C++ 编译支持）
+- `python3`（运行 Python 示例代码时）
+- `node`（运行 JavaScript 示例代码时）
 - 浏览器
 
 ## 启动项目
@@ -35,7 +41,15 @@
 在项目根目录运行：
 
 ```bash
-python3 server.py
+make
+./server
+```
+
+如果 `7000` 端口已被占用，也可以改用其它端口：
+
+```bash
+./server 7001
+PORT=7001 ./server
 ```
 
 然后在浏览器中打开：
@@ -73,4 +87,4 @@ http://localhost:7000/
 
 - 默认服务器端口为 `7000`。
 - 代码片段存储在 `code_store.db`，与应用同级目录。
-- 若要接入真实 AI 服务，可参考 `server.py` 中的 `call_deepseek` 函数并替换 `DEEPSEEK_API_KEY`。
+- 当前 `POST /c_learning/api/ai` 仍为占位实现，后续可在 `server.c` 中接入真实模型。

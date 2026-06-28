@@ -1,61 +1,143 @@
-const API_BASE = "/c_learning";
+import { initEditor } from './editor.js';
+import { initAI } from './ai.js';
+import { getMe, login, register, logout } from './api.js';
 
-const aiSendBtn = document.getElementById("ai-send");
-const aiInput = document.getElementById("ai-input");
-const aiOutput = document.getElementById("ai-output");
-
-function appendAiMessage(role, text) {
-  const div = document.createElement("div");
-  div.className = role === "user" ? "ai-msg user" : "ai-msg assistant";
-  div.textContent = text;
-  aiOutput.appendChild(div);
-  aiOutput.scrollTop = aiOutput.scrollHeight;
+function $(sel) {
+  return document.querySelector(sel);
 }
 
-async function sendAiMessage() {
-  const question = aiInput.value.trim();
+/* ================= 用户栏 ================= */
+function updateUserBar(username) {
+  const userBar = $('#user-bar');
+  if (!userBar) return;
 
-  if (!question) {
-    alert("请输入问题");
-    return;
+  if (username) {
+    userBar.innerHTML = `
+      <span>当前用户：${username}</span>
+      <button id="logout-btn">退出登录</button>
+    `;
+
+    const logoutBtn = $('#logout-btn');
+    logoutBtn.onclick = async () => {
+      await logout();
+      location.reload();
+    };
+  } else {
+    userBar.innerHTML = `
+      <span>未登录</span>
+      <button id="login-btn">登录</button>
+    `;
+
+    const loginBtn = $('#login-btn');
+    loginBtn.onclick = () => {
+      $('#auth-modal')?.classList.remove('hidden');
+    };
   }
+}
 
-  appendAiMessage("user", question);
-  aiInput.value = "";
+/* ================= 登录切换 ================= */
+function initAuthSwitch() {
+  const switchBtn = $('#auth-switch');
+  const submitBtn = $('#auth-submit');
+  const title = $('#auth-title');
+  const text = $('#auth-switch-text');
 
-  aiSendBtn.disabled = true;
-  aiSendBtn.textContent = "发送中...";
+  if (!switchBtn || !submitBtn || !title || !text) return;
+
+  switchBtn.onclick = (e) => {
+    e.preventDefault();
+
+    const mode = submitBtn.dataset.mode || 'login';
+
+    if (mode === 'login') {
+      submitBtn.dataset.mode = 'register';
+      submitBtn.textContent = '注册';
+      title.textContent = '注册';
+      text.textContent = '已有账号？';
+      switchBtn.textContent = '去登录';
+    } else {
+      submitBtn.dataset.mode = 'login';
+      submitBtn.textContent = '登录';
+      title.textContent = '登录';
+      text.textContent = '没有账号？';
+      switchBtn.textContent = '去注册';
+    }
+  };
+}
+
+/* ================= 主程序 ================= */
+function startApp() {
+  initEditor();
+  initAI();
+}
+
+/* ================= 初始化认证 ================= */
+async function initAuth() {
+  initAuthSwitch();
 
   try {
-    const res = await fetch(`${API_BASE}/api/ai`, {
-      method: "POST",
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ question })
-    });
+    const me = await getMe();
 
-    const data = await res.json();
+    if (me.success && me.authenticated) {
+      updateUserBar(me.username);
+      $('#auth-modal')?.classList.add('hidden');
+      $('#app')?.classList.remove('hidden');
+      startApp();
+    } else {
+      updateUserBar(null);
+      $('#auth-modal')?.classList.remove('hidden');
+    }
+  } catch (e) {
+    console.error('initAuth error:', e);
+    updateUserBar(null);
+    $('#auth-modal')?.classList.remove('hidden');
+  }
 
-    if (!res.ok || !data.success) {
-      appendAiMessage("assistant", `错误：${data.error || "AI 请求失败"}${data.detail ? "\n" + data.detail : ""}`);
+  const submit = $('#auth-submit');
+  if (!submit) return;
+
+  submit.onclick = async () => {
+    const username = $('#auth-username')?.value.trim();
+    const password = $('#auth-password')?.value || '';
+
+    if (!username || password.length < 6) {
+      $('#auth-error').textContent = '用户名不能为空，密码至少 6 位';
       return;
     }
 
-    appendAiMessage("assistant", data.answer);
-  } catch (err) {
-    appendAiMessage("assistant", `请求失败：${err.message}`);
-  } finally {
-    aiSendBtn.disabled = false;
-    aiSendBtn.textContent = "发送";
-  }
+    const mode = submit.dataset.mode || 'login';
+    let data;
+
+    try {
+      data = mode === 'login'
+        ? await login(username, password)
+        : await register(username, password);
+    } catch (e) {
+      $('#auth-error').textContent = '请求失败：' + e.message;
+      return;
+    }
+
+    if (!data.success) {
+      $('#auth-error').textContent = data.error || '操作失败';
+      return;
+    }
+
+    // 注册成功后自动登录一次
+    if (mode === 'register') {
+      const loginRes = await login(username, password);
+      if (!loginRes.success) {
+        $('#auth-error').textContent = loginRes.error || '注册成功，但自动登录失败';
+        return;
+      }
+    }
+
+    updateUserBar(username);
+    $('#auth-error').textContent = '';
+    $('#auth-modal')?.classList.add('hidden');
+    $('#app')?.classList.remove('hidden');
+    startApp();
+  };
 }
 
-aiSendBtn.addEventListener("click", sendAiMessage);
-
-aiInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-    sendAiMessage();
-  }
-});
+initAuth();
+``

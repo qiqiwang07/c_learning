@@ -3,3 +3,6 @@
 *.pyd
 __pycache__/
 .env
+*.o
+server
+*.log

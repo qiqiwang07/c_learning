@@ -1,100 +1,56 @@
-export const exercises = [
+export const courses = [
   {
-    id: 'primes-range',
-    title: '区间质数',
-    desc: '提示输入两个整数，并打印它们之间（含端点）的所有质数。',
-    templates: {
-      C: `#include <stdio.h>
-#include <stdbool.h>
-
-bool is_prime(int n) {
-  if (n <= 1) return false;
-  if (n == 2) return true;
-  if (n % 2 == 0) return false;
-  for (int i = 3; i * i <= n; i += 2) {
-    if (n % i == 0) return false;
-  }
-  return true;
-}
-
-int main(void) {
-  int a, b;
-  scanf("%d %d", &a, &b);
-  if (a > b) { int t = a; a = b; b = t; }
-  for (int n = a; n <= b; n++) {
-    if (is_prime(n)) printf("%d\\n", n);
-  }
-}
-`,
-
-      'C++': `#include <iostream>
-using namespace std;
-
-bool is_prime(int n) {
-  if (n <= 1) return false;
-  if (n == 2) return true;
-  if (n % 2 == 0) return false;
-  for (int i = 3; i * i <= n; i += 2) {
-    if (n % i == 0) return false;
-  }
-  return true;
-}
-
-int main() {
-  int a, b;
-  cin >> a >> b;
-  if (a > b) swap(a, b);
-  for (int n = a; n <= b; n++) {
-    if (is_prime(n)) cout << n << "\\n";
-  }
-}
-`,
-
-      Python: `def is_prime(n):
-    if n <= 1:
-        return False
-    for i in range(2, int(n**0.5)+1):
-        if n % i == 0:
-            return False
-    return True
-
-a, b = map(int, input().split())
-if a > b:
-    a, b = b, a
-
-for n in range(a, b+1):
-    if is_prime(n):
-        print(n)
-`,
-
-      JavaScript: `const readline = require('readline');
-const rl = readline.createInterface({ input: process.stdin });
-
-let nums = [];
-rl.on('line', line => {
-  nums.push(...line.trim().split(/\\s+/).map(Number));
-  if (nums.length >= 2) {
-    let [a, b] = nums;
-    if (a > b) [a, b] = [b, a];
-
-    for (let n = a; n <= b; n++) {
-      if (isPrime(n)) console.log(n);
-    }
-    rl.close();
-  }
-});
-
-function isPrime(n) {
-  if (n <= 1) return false;
-  for (let i = 2; i * i <= n; i++) {
-    if (n % i === 0) return false;
-  }
-  return true;
-}
-`,
-    },
-
-    sampleIn: '10 30',
-    sampleOut: '11\n13\n17\n19\n23\n29'
+    id: 'c-basics',
+    title: 'C 语言程序设计基础',
+    icon: 'C',
+    tags: ['零基础', '智能入门'],
+    color: '#bf5a36',
+    desc: '面向零基础学员，系统讲授变量、控制结构、多维数组与基本函数，轻松迈出计算机编程的第一步。',
+    stats: '15 课时 · 4 个练习',
+  },
+  {
+    id: 'c-pointers',
+    title: '指针与内存深度解密',
+    icon: 'P',
+    tags: ['核心进阶', '硬核必修'],
+    color: '#2a5a9f',
+    desc: '彻底攻克 C 语言核心关卡：指针、首地址、连续分配与释放，结合数据偏移，从底层理解寄存器与内存。',
+    stats: '18 课时 · 5 个专题',
+  },
+  {
+    id: 'cpp-oop',
+    title: '面向对象 C++ 现代工程',
+    icon: 'C++',
+    tags: ['工程设计', '高级语法'],
+    color: '#007acc',
+    desc: '全面过渡至 C++ 开发。覆盖封装、多态、继承，掌握 STL 标准容器，了解现代 C++17/20 常用新特性。',
+    stats: '24 课时 · 6 大实验',
+  },
+  {
+    id: 'algorithms',
+    title: '手写数据结构与算法',
+    icon: 'DS',
+    tags: ['工程进阶', '算法训练'],
+    color: '#2ea44f',
+    desc: '系统性掌握经典数据结构！手写实现单链表、队列、二叉树、红黑树、快排与动态规划，夯实大厂笔试底子。',
+    stats: '30 课时 · 12 道大题',
+  },
+  {
+    id: 'system-linux',
+    title: 'Linux 系统底层编程',
+    icon: 'Linux',
+    tags: ['底层应用', '多线程'],
+    color: '#343a40',
+    desc: '在 Linux 平台深潜：掌握文件描述符、多进程管理（fork/wait）、线程池、管道、网络 Socket 网络。',
+    stats: '20 课时 · 4 项任务',
+  },
+  {
+    id: 'scripting-py',
+    title: 'Python 高效运维与数据科学',
+    icon: 'Py',
+    tags: ['轻量脚本', '自动化'],
+    color: '#e0a106',
+    desc: '掌握快速编写网页爬虫与自动化测试。借助多线程与 Pandas 系统对大数据流进行格式清洗及提取。',
+    stats: '12 课时 · 3 节作业',
   }
 ];

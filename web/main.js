@@ -1,5 +1,5 @@
 import { initEditor } from './editor.js';
-import { initAI } from './ai.js';
+import { courses } from './data.js';
 import { getMe, login, register, logout } from './api.js';
 
 function $(sel) {
@@ -65,10 +65,42 @@ function initAuthSwitch() {
   };
 }
 
+/* ================= 渲染课程列表 ================= */
+function renderCourses() {
+  const grid = $('#course-grid');
+  if (!grid) return;
+
+  grid.innerHTML = courses.map(course => {
+    const tagsHtml = course.tags.map(tag => `<span class="course-tag">${tag}</span>`).join('');
+    const iconColor = course.color || 'var(--accent)';
+    
+    return `
+      <div class="course-card">
+        <div class="course-card-top">
+          <div class="course-logo" style="background: ${iconColor}1a; color: ${iconColor}; border: 1px solid ${iconColor}33;">
+            ${course.icon}
+          </div>
+          <div class="course-tag-row">
+            ${tagsHtml}
+          </div>
+        </div>
+        <h3 class="course-title">${course.title}</h3>
+        <p class="course-description">${course.desc}</p>
+        <div class="course-footer">
+          <span class="course-meta">${course.stats}</span>
+          <button class="course-btn" style="background: linear-gradient(135deg, ${iconColor}, ${iconColor}dd); box-shadow: 0 8px 20px ${iconColor}22;" onclick="alert('已开启【${course.title}】的课程订阅，现在开始进入学习大纲！')">
+            立即学习
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 /* ================= 主程序 ================= */
 function startApp() {
   initEditor();
-  initAI();
+  renderCourses();
 }
 
 /* ================= 初始化认证 ================= */

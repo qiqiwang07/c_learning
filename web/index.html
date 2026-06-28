@@ -89,88 +89,23 @@
     </div>
 
     <div id="app" class="hidden">
-      <main class="workspace-shell">
-        <aside id="ex-list" class="panel soft-panel">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Practice Deck</p>
-              <h2>练习清单</h2>
-            </div>
-            <span class="chip">C / C++ / Python / JS</span>
-          </div>
-          <p class="section-copy">按题目逐步练习，先读思路，再切到编辑器尝试实现。</p>
-          <ul id="exercises"></ul>
-        </aside>
-
-        <section id="editor-main" class="panel editor-panel">
-          <div id="meta">
-            <div>
-              <p class="eyebrow">Workspace</p>
-              <h2 id="title">请选择练习</h2>
-              <p class="section-copy compact-copy">把一个小样例先跑通，再逐步补齐边界情况和异常输入。</p>
-            </div>
-
-            <div id="controls">
-              <button id="run-code">运行代码</button>
-            </div>
-          </div>
-
-          <div class="editor-grid">
-            <div id="code-wrap" class="soft-panel editor-surface">
-<textarea id="code">#include <stdio.h>
-
-int main(void) {
-  printf("Hello, C!\n");
-  return 0;
-}
-</textarea>
-            </div>
-
-            <div class="soft-panel note-panel">
-              <p class="eyebrow">Hints</p>
-              <h3>写题时先固定一个最小输入输出样例</h3>
-              <p>
-                对于循环、分支和函数题，先让程序对一个小样例跑通，再逐步扩展边界情况。这样比一次性写完整逻辑更容易定位错误。
-              </p>
-              <div class="note-divider"></div>
-              <p class="note-callout">建议流程：先写最小正确版本，再处理性能和格式细节。</p>
-            </div>
-          </div>
-        </section>
+      <main class="course-market-shell">
+        <div class="market-intro">
+          <p class="eyebrow">Course Catalogue</p>
+          <h2>课程超市与关卡市场</h2>
+          <p class="section-copy">请选择你想入学的课程。每个格子代表一门精选的核心课程与实践进阶大纲。</p>
+        </div>
+        <div id="course-grid" class="course-grid">
+          <!-- Courses Grid Cards dynamically generated here -->
+        </div>
       </main>
     </div>
-  </div>
-
-  <button id="ai-fab" aria-label="打开 AI 助手">AI</button>
-
-  <div id="ai-float-panel" class="hidden">
-    <div id="ai-header">
-      <div>
-        <p class="eyebrow">Assistant</p>
-        <strong>AI 助手</strong>
-      </div>
-      <span class="chip">问思路 / 问报错</span>
-    </div>
-
-    <div id="ai-output"></div>
-
-    <textarea id="ai-input" placeholder="输入问题，例如：为什么这个循环会死循环？"></textarea>
-    <button id="ai-send">发送</button>
   </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
 
 <script type="module" src="./main.js"></script>
-
-<script>
-  const fab = document.getElementById("ai-fab");
-  const panel = document.getElementById("ai-float-panel");
-
-  fab.onclick = () => {
-    panel.classList.toggle("hidden");
-  };
-</script>
 
 </body>
 </html>

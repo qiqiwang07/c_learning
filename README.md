@@ -13,16 +13,16 @@
 
 ## 目录结构
 
-- `server.c` - C 后端 HTTP 服务器（`libevent` + `sqlite3` + `OpenSSL`）
+- `server/` - 后端源码及可执行文件目录
+  - `server.c` - C 后端 HTTP 服务器（`libevent` + `sqlite3` + `OpenSSL`）
 - `Makefile` - C 后端编译与启动
-- `web/index.html` - 前端入口页面
-- `web/style.css` - 页面样式
-- `web/main.js` - 前端应用启动、认证流程
-- `web/api.js` - 浏览器端 API 调用封装
-- `web/editor.js` - 编辑器初始化和交互逻辑
-- `web/ai.js` - AI 问答界面逻辑
-- `web/state.js` - 应用状态管理
-- `web/ui.js` - 前端 UI 支持代码
+- `front/index.html` - 前端入口页面
+- `front/style.css` - 页面样式
+- `front/main.js` - 前端应用启动、认证流程
+- `front/api.js` - 浏览器端 API 调用封装
+- `front/editor.js` - 编辑器初始化和交互逻辑
+- `front/state.js` - 应用状态管理
+- `front/ui.js` - 前端 UI 支持代码
 - `code_store.db` - 运行时生成的 SQLite 数据库（存储用户和代码片段）
 
 ## 运行环境
@@ -42,23 +42,27 @@
 
 ```bash
 make
-./server
+./server/server
 ```
 
 如果 `7000` 端口已被占用，也可以改用其它端口：
 
 ```bash
-./server 7001
-PORT=7001 ./server
+./server/server 7001
+PORT=7001 ./server/server
 ```
 
 然后在浏览器中打开：
 
 ```text
-http://localhost:7000/
+http://localhost:7000/c_learning/learn/
 ```
 
-页面会加载练习编辑器和登录界面。
+课程编辑站入口：
+
+```text
+http://localhost:7000/c_learning/editor/
+```
 
 ## 使用说明
 
@@ -82,6 +86,9 @@ http://localhost:7000/
 - `GET  /c_learning/api/list` - 列出保存的代码片段
 - `GET  /c_learning/api/snippet?id=<id>` - 获取指定代码片段
 - `POST /c_learning/api/ai` - AI 问答接口（当前为占位实现）
+- `GET  /c_learning/api/courses` - 课程列表
+- `GET  /c_learning/api/course?id=<id>` - 课程详情
+- `POST /c_learning/api/course/save` - 创建/更新课程
 
 ## 备注
 

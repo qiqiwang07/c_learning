@@ -22,46 +22,7 @@
   <div class="page-glow page-glow-left"></div>
   <div class="page-glow page-glow-right"></div>
   <div class="page-shell">
-    <header class="hero-bar">
-      <div class="brand-block">
-        <p class="eyebrow">C Learning Studio</p>
-        <h1>把练习、编译和讲解放进一个更顺手的界面里</h1>
-        <p class="hero-copy">
-          面向初学者的 C 语言训练页面，保留代码执行和登录能力，同时把阅读、写作和提问区域整理成更清晰的工作台。
-        </p>
-      </div>
-
-      <div class="hero-stats">
-        <div class="stat-card">
-          <span class="stat-label">训练模式</span>
-          <strong>本地编译</strong>
-          <p>直接调用你的编译器与运行环境。</p>
-        </div>
-        <div class="stat-card accent">
-          <span class="stat-label">推荐流程</span>
-          <strong>读题 -> 改码 -> 运行</strong>
-          <p>适合课堂演示和个人练习。</p>
-        </div>
-        <div class="stat-card muted">
-          <span class="stat-label">工作台</span>
-          <strong>编辑器 + AI 助手</strong>
-          <p>把代码、提示和问答放在同一个页面里。</p>
-        </div>
-      </div>
-    </header>
-
-    <section class="hero-strip soft-panel">
-      <div>
-        <p class="eyebrow">What You Can Do</p>
-        <h2>先聚焦练习过程，再看结果</h2>
-      </div>
-      <div class="strip-points">
-        <span class="strip-pill">逐题练习</span>
-        <span class="strip-pill">本地运行</span>
-        <span class="strip-pill">保存代码</span>
-        <span class="strip-pill">AI 提问</span>
-      </div>
-    </section>
+    <!-- 主页面顶部介绍已移除，直接进入课程网格 -->
 
     <div id="user-bar" class="soft-panel user-bar"></div>
 
@@ -90,15 +51,24 @@
 
     <div id="app" class="hidden">
       <main class="course-market-shell">
-        <div class="market-intro">
-          <p class="eyebrow">Course Catalogue</p>
-          <h2>课程超市与关卡市场</h2>
-          <p class="section-copy">请选择你想入学的课程。每个格子代表一门精选的核心课程与实践进阶大纲。</p>
-        </div>
+          <!-- 直接展示课程网格（移除标题与介绍） -->
         <div id="course-grid" class="course-grid">
           <!-- Courses Grid Cards dynamically generated here -->
         </div>
       </main>
+    </div>
+
+    <div id="course-reader-modal" class="modal hidden">
+      <div id="course-reader-panel" class="course-reader-panel">
+        <div class="course-reader-head">
+          <h3 id="course-reader-title">课程阅读</h3>
+          <div class="course-reader-actions">
+            <button id="course-reader-close" class="course-reader-btn course-reader-btn-close" type="button">退出</button>
+          </div>
+        </div>
+        <div id="course-reader-meta" class="course-reader-meta"></div>
+        <div id="course-reader-body" class="course-reader-body"></div>
+      </div>
     </div>
   </div>
 

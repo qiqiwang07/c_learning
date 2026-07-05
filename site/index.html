@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>新课程站点</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Manrope:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>课程工作台（独立站）</h1>
+    <div class="actions">
+      <button id="new-course-btn">新建课程</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <aside class="sidebar">
+      <h3>课程列表</h3>
+      <ul id="course-list"></ul>
+    </aside>
+
+    <section class="workspace hidden" id="workspace">
+      <div class="course-header">
+        <h2 id="course-title"></h2>
+        <div class="font-controls">
+          <label>文字大小 <input id="font-size" type="range" min="12" max="28" value="16"></label>
+        </div>
+        <div class="view-controls">
+          <button id="toggle-max">最大化</button>
+        </div>
+      </div>
+
+      <div class="course-body">
+        <div class="text-area">
+          <h4>章节文字（可编辑）</h4>
+          <textarea id="course-text" class="resizable"></textarea>
+          <div class="text-actions">
+            <button id="insert-code-snippet">插入代码片段</button>
+            <button id="save-text">保存文字</button>
+          </div>
+        </div>
+
+        <div class="code-area">
+          <h4>编程区域</h4>
+          <div class="code-controls">
+            <label>代码大小 <input id="code-font-size" type="range" min="12" max="20" value="13"></label>
+            <button id="add-student-code">添加学生编程区</button>
+          </div>
+          <select id="code-lang">
+            <option value="javascript">JavaScript</option>
+            <option value="text">Plain Text</option>
+          </select>
+          <textarea id="code-editor" class="code-editor" spellcheck="false">// 在这里编写 JavaScript 代码
+console.log('Hello world');</textarea>
+          <div class="code-actions">
+            <button id="run-code">运行</button>
+            <button id="clear-cmd">清空命令行</button>
+          </div>
+          <div id="student-code-list"></div>
+          <div class="cmd-area">
+            <div class="cmd-header">命令行输出</div>
+            <pre id="cmd-output" class="cmd-output" aria-live="polite"></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 新建课程模态 -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <!-- 模态标题已移除 -->
+      <label>课程标题 <input id="new-title" /></label>
+      <label>初始文字 <textarea id="new-text"></textarea></label>
+      <div class="modal-actions">
+        <button id="create-course">创建</button>
+        <button id="cancel-create">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js" type="module"></script>
+</body>
+</html>

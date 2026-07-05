@@ -1,10 +1,10 @@
 CC = gcc
-SRCS = server.c
+SRCS = server/server.c
 OBJS = $(SRCS:.c=.o)
 
 CFLAGS = -O2 -Wall -Wextra -std=c11
 LIBS = -levent -lsqlite3 -lssl -lcrypto
-TARGET = server
+TARGET = server/server
 
 all: $(TARGET)
 

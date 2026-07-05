@@ -27,7 +27,7 @@ static void handle_register(struct evhttp_request *req, void *arg) {
 static void handle_index(struct evhttp_request *req, void *arg) {
   // app 在此函数当前未使用，但保留参数以便将来扩展
   (void)arg;
-  const char *path = "web/index.html";
+  const char *path = "front/index.html";
   FILE *f = fopen(path, "rb");
   if (!f) {
     evhttp_send_error(req, 404, "Not found");
